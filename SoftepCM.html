@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SOFTEP Interactive Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="logotipos/favicon.ico">
+    <style>
+        :root {
+            --bg: #050712;
+            --surface: rgba(8, 11, 27, 0.96);
+            --surface-soft: rgba(15, 23, 42, 0.92);
+            --surface-strong: #0b1222;
+            --surface-muted: #111827;
+            --border: rgba(148, 163, 184, 0.16);
+            --text: #e7eefc;
+            --text-muted: #94a3b8;
+            --text-soft: #cbd5e1;
+            --accent: #60a5fa;
+            --accent-soft: #0162ff;
+            --accent-strong: #38bdf8;
+            --success: #22c55e;
+            --danger: #fb923c;
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+            --surface-glow: rgba(96, 165, 250, 0.08);
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 20%), radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.1), transparent 20%), var(--bg); color: var(--text); margin: 0; padding: 14px; }
+        .dashboard { max-width: 1600px; margin: auto; }
+        .controls { background: var(--surface); padding: 20px 22px; border-radius: 24px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); }
+        .controls-left { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+        .controls-right { display: flex; gap: 10px; }
+        .controls strong { font-size: 13px; color: var(--text-soft); letter-spacing: 0.02em; }
+        select, input, button { padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; font-size: 13px; background: var(--surface-soft); color: var(--text); box-shadow: inset 0 1px 3px rgba(255,255,255,0.04); }
+        select:focus, input:focus, button:focus { outline: 2px solid rgba(96, 165, 250, 0.4); outline-offset: 2px; }
+        .tab-btn { background: rgba(255,255,255,0.03); color: var(--text-soft); border: 1px solid rgba(148, 163, 184, 0.14); cursor: pointer; padding: 10px 18px; border-radius: 14px; transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; }
+        .tab-btn:hover { background: rgba(96, 165, 250, 0.12); color: var(--text); }
+        .tab-btn.active { background: var(--accent); color: #0f172a; border-color: transparent; box-shadow: 0 12px 30px rgba(59, 130, 246, 0.18); transform: translateY(-1px); }
+        .tab-btn.active:hover { background: var(--accent-strong); }
+        .table-container { background: var(--surface); padding: 22px; border-radius: 24px; box-shadow: var(--shadow); overflow-x: auto; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; margin: 0; }
+        th { background: rgba(15, 23, 42, 0.96); text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(148, 163, 184, 0.14); font-size: 13px; color: var(--text); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; vertical-align: middle; line-height: 1.4; }
+        td { padding: 12px 14px; border-bottom: 1px solid rgba(148, 163, 184, 0.08); font-size: 13px; line-height: 1.55; color: var(--text-soft); }
+        .group-header { text-align: center; color: var(--text); border-bottom: 1px solid rgba(148, 163, 184, 0.14); }
+        thead tr:first-child th.group-header { border-bottom: 1px solid rgba(148, 163, 184, 0.14); }
+        th:nth-child(n+3), td:nth-child(n+3) { text-align: center; }
+        thead tr:last-child th { text-align: center; }
+        .theoretical-column { width: 70px; max-width: 70px; white-space: nowrap; text-align: right; }
+        .real-progress-cell { width: 90px; max-width: 90px; }
+        .comment-cell { width: 40px; text-align: center; }
+        .comments-btn { margin: 0; padding: 6px 12px; font-size: 12px; background: rgba(96, 165, 250, 0.14); color: var(--text); border: 1px solid rgba(96, 165, 250, 0.26); border-radius: 10px; }
+        tr:hover td:first-child { border-left: 4px solid rgba(255,255,255,0.75); }
+        tr:hover td:last-child { border-right: 4px solid rgba(255,255,255,0.75); }
+        .badge-ayesa { background: #000000; color: #d4af37; padding: 5px 10px; border-radius: 999px; font-weight: 700; font-size: 11px; border: 1px solid rgba(255,255,255,0.12); }
+        .badge-ayesa-asda { background: rgba(59, 130, 246, 0.22); color: #d4af37; border: 1px solid rgba(96, 165, 250, 0.28); padding: 5px 10px; border-radius: 999px; font-weight: 700; font-size: 11px; }
+        .package-row { background: #000000; color: #eff6ff; font-weight: 800; border-top: 1px solid rgba(56, 189, 248, 0.35); border-left: 4px solid var(--accent); }
+        .package-row td { border-bottom: 1px solid rgba(56, 189, 248, 0.28); padding: 14px 14px; }
+        .package-row strong { color: #dbeafe; }
+        .task-row-even { background: #1F2937; }
+        .task-row-odd { background: #111827; }
+        .task-row-even td { color: #e2e8f0; }
+        .task-row-odd td { color: #e2e8f0; }
+        .task-row-even td, .task-row-odd td { border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+        .subtask-row { background: rgba(56, 189, 248, 0.08); border-left: 4px solid rgba(56, 189, 248, 0.35); }
+        .subtask-row td { border-bottom: 1px solid rgba(96, 165, 250, 0.18); }
+        .subtask-row.subtask-end > td { border-bottom: 2px solid var(--accent); }
+        .subtask-row .task-column span { font-style: italic; color: var(--text-soft); }
+        .status-select { width: 100%; max-width: 120px; box-sizing: border-box; margin-top: 1px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-soft); color: var(--text); font-size: 12px; }
+        .progress-input { width: 55px; min-width: 55px; box-sizing: border-box; margin-top: 4px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; text-align: right; font-size: 13px; background: var(--surface-soft); color: var(--text); }
+        .comments-btn { margin-left: 8px; padding: 8px 12px; border: 1px solid var(--border); background: var(--surface-soft); color: var(--text); border-radius: 12px; cursor: pointer; font-size: 12px; }
+        .comments-btn:hover { background: rgba(96, 165, 250, 0.12); }
+        .task-title { display: inline-block; max-width: 92ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+        .package-title { display: inline-block; max-width: 92ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+        .task-column { min-width: 92ch; }
+        .socios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+        .socio-card { background: linear-gradient(180deg, #111827 0%, #17243a 100%); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 26px; padding: 24px; box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35); transition: transform 0.24s ease, box-shadow 0.24s ease; }
+        .socio-card.agilia { background: linear-gradient(180deg, #111827 0%, rgba(59, 130, 246, 0.12) 100%); border-color: rgba(59, 130, 246, 0.22); }
+        .socio-card:hover { transform: translateY(-2px); box-shadow: 0 26px 70px rgba(15, 23, 42, 0.55); }
+        .socio-card.agilia:hover { box-shadow: 0 26px 70px rgba(59, 130, 246, 0.28); }
+        .socio-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+        .socio-card.agilia .socio-header { border-bottom-color: rgba(59, 130, 246, 0.18); }
+        .socio-card h3 { margin: 0; font-size: 22px; line-height: 1.1; color: var(--text); letter-spacing: 0.01em; }
+        .socio-card.agilia h3 { color: #dbeafe; }
+        .socio-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+        .socio-web { color: var(--accent); font-size: 13px; white-space: nowrap; text-decoration: none; }
+        .socio-web:hover { text-decoration: underline; }
+        .socios-actions { display: flex; justify-content: flex-start; margin-bottom: 16px; }
+        .copy-emails-btn { background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(59, 130, 246, 0.26)); color: var(--text); border: 1px solid rgba(96, 165, 250, 0.3); cursor: pointer; padding: 10px 16px; font-size: 13px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, transform 0.2s ease; align-self: flex-start; }
+        .copy-emails-btn:hover { background: rgba(56, 189, 248, 0.28); color: #f8fafc; transform: translateY(-1px); }
+        .socio-status { background: rgba(56, 189, 248, 0.16); color: #dbeafe; padding: 7px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .socio-card .field-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+        .socio-card label { display: block; font-size: 12px; color: var(--text-soft); margin-bottom: 4px; }
+        .socio-card input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; font-size: 13px; background: var(--surface-soft); color: var(--text); }
+        .contact-card { background: #17243a; border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 18px; padding: 20px; margin-bottom: 14px; box-shadow: inset 0 1px 3px rgba(255,255,255,0.04); }
+        .contact-card .contact-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+        .info-row { display: grid; grid-template-columns: 110px 1fr; gap: 1px; align-items: center; margin-bottom: 8px; }
+        .info-label { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+        .info-value { color: var(--text); font-size: 14px; font-weight: 600; }
+        .small-btn { background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%); color: white; border: none; cursor: pointer; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; transition: transform 0.2s ease, background 0.2s ease; }
+        .small-btn:hover { transform: translateY(-1px); background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%); }
+        .card-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+        .empty-state { padding: 32px; background: rgba(148, 163, 184, 0.06); border: 1px dashed rgba(148, 163, 184, 0.3); border-radius: 18px; text-align: center; color: var(--text-soft); font-weight: 600; }
+        .message-box { display: none; padding: 16px 18px; border-radius: 18px; margin-top: 20px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(96, 165, 250, 0.22); color: var(--text); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26); }
+        .message-box.error { background: rgba(220, 38, 38, 0.12); border-color: rgba(251, 146, 60, 0.25); color: #fee2e2; }
+        .table-container { background: var(--surface); padding: 18px; border-radius: 20px; box-shadow: 0 18px 40px var(--shadow); overflow-x: auto; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.72); }
+        .modal-content { background-color: var(--surface); margin: auto; padding: 28px; border-radius: 24px; max-width: 820px; width: 92%; top: 50%; left: 50%; transform: translate(-50%, -50%); position: fixed; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(148, 163, 184, 0.16); box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65); }
+        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.18); padding-bottom: 12px; }
+        .modal-header > div { flex: 1; min-width: 0; }
+        .modal-header h2 { margin: 0; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
+        .modal-subtitle { margin: 5px 0 0 0; color: var(--text-muted); font-size: 14px; font-weight: normal; }
+        .close-modal { font-size: 28px; font-weight: bold; cursor: pointer; color: #94a3b8; }
+        .close-modal:hover { color: var(--text); }
+        .comments-list { max-height: 300px; overflow-y: auto; margin-bottom: 15px; }
+        .comment-item { background: rgba(148, 163, 184, 0.08); padding: 12px; margin-bottom: 12px; border-radius: 10px; border-left: 4px solid var(--accent); }
+        .comment-date { font-size: 12px; color: var(--text-muted); font-weight: bold; }
+        .comment-text { font-size: 13px; margin-top: 6px; color: var(--text-soft); }
+        .history-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+        .history-panel { flex: 1; min-width: 220px; }
+        .history-panel .comments-list { max-height: 220px; }
+        .comments-section { margin-bottom: 20px; }
+        .history-panel h3, .comments-section h3 { margin: 0 0 10px 0; color: var(--text); font-size: 16px; }
+        .comment-input-section { display: flex; flex-direction: column; gap: 10px; }
+        .comment-textarea { width: 100%; padding: 12px; border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 14px; font-size: 13px; font-family: 'Segoe UI', sans-serif; min-height: 90px; resize: vertical; background: #0f172a; color: var(--text); }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
+        .modal-btn { padding: 10px 16px; border-radius: 14px; border: 1px solid var(--border); cursor: pointer; font-size: 13px; background: var(--surface-soft); color: var(--text); }
+        .modal-btn-add { background: var(--accent); color: #0f172a; border: none; }
+        .modal-btn-add:hover { opacity: 0.96; }
+        .modal-btn-cancel { background: var(--surface-soft); }
+        .modal-btn-cancel:hover { background: rgba(148, 163, 184, 0.12); }
+        .cabecera-proyecto { display: flex; justify-content: space-between; align-items: center; padding: 0 30px; background-color: #000000; height: 96px; width: 100%; box-sizing: border-box; border-bottom: 1px solid rgba(148, 163, 184, 0.14); margin-bottom: 14px; gap: 18px; }
+        .header-brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+        .softep-logo { height: 90px; width: auto; display: block; filter: brightness(1.2); transform: scale(1.3); transform-origin: left center; }
+        .nombre-proyecto { color: var(--text); font-family: 'Arial Black', sans-serif; font-size: 34px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+        .contenedor-logos img { height: 40px; width: auto; opacity: 0.7; transition: opacity 0.3s ease, filter 0.3s ease; filter: grayscale(0.7); }
+        .contenedor-logos img:hover { opacity: 1; filter: grayscale(0); }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="cabecera-proyecto">
+            <div class="header-brand">
+                <img class="softep-logo" src="logotipos/softep.png" alt="Logotipo SOFTEP">
+                <h1 class="nombre-proyecto">SOFTEP</h1>
+            </div>
+            <div class="contenedor-logos">
+                <img src="logotipos/empresas.png" alt="Logos de empresas">
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="controls-left">
+                <strong>Filtrar por Responsable:</strong>
+                <select id="filterLeader" onchange="render()">
+                    <option value="todos">Todos los Socios</option>
+                </select>
+                <strong>Filtrar por Año:</strong>
+                <select id="filterYear" onchange="render()">
+                    <option value="">Todos los años</option>
+                </select>
+                <strong>Filtrar por Estado:</strong>
+                <select id="filterStatus" onchange="render()">
+                    <option value="TODOS">Todos los estados</option>
+                    <option value="No iniciado">No iniciado</option>
+                    <option value="Iniciado">Iniciado</option>
+                    <option value="Finalizado">Finalizado</option>
+                </select>
+            </div>
+            <div class="controls-right">
+                <button id="tab-tareas" class="tab-btn active" onclick="setTab('tareas')">TAREAS</button>
+                <button id="tab-entregables" class="tab-btn" onclick="setTab('entregables')">ENTREGABLES</button>
+                <button id="tab-socios" class="tab-btn" onclick="setTab('socios')">SOCIOS</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div id="dashboardContent"></div>
+        </div>
+
+        <div id="messageBox" class="message-box"></div>
+    </div>
+
+    <div id="commentsModal" class="modal" onclick="if(event.target===this) closeCommentsModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-subtitle">Estado, progreso y comentarios del elemento seleccionado</p>
+                </div>
+                <span class="close-modal" onclick="closeCommentsModal()">&times;</span>
+            </div>
+            <div class="history-row">
+                <div class="history-panel">
+                    <h3>Estado</h3>
+                    <div id="statusList" class="comments-list"></div>
+                </div>
+                <div class="history-panel">
+                    <h3>Progreso</h3>
+                    <div id="progressList" class="comments-list"></div>
+                </div>
+            </div>
+            <div class="comments-section">
+                <h3>Comentarios</h3>
+                <div id="commentsList" class="comments-list"></div>
+            </div>
+            <textarea id="newComment" class="comment-textarea" placeholder="Añade un nuevo comentario..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeCommentsModal()">Cerrar</button>
+                <button class="modal-btn modal-btn-add" onclick="addComment()">Añadir comentario</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SAVE_TASKS_ENDPOINT = `${window.location.origin}/save-tareas`;
+        const SAVE_ENTREGABLES_ENDPOINT = `${window.location.origin}/save-entregables`;
+        const SAVE_CONSORCIO_ENDPOINT = `${window.location.origin}/save-consorcio`;
+
+        let store = { dates: [], tareas: {}, entregables: {}, consorcio: { socios: [] } };
+        let packageMeta = {};
+        let tasks = [];
+        let deliverables = [];
+        let socios = [];
+        let activeTab = 'tareas';
+        let currentModal = { code: null, type: 'task' };
+
+        function normalizeStatus(status) {
+            const normalized = (status || '').trim();
+            const map = {
+                'Iniciada': 'Iniciado',
+                'Iniciado': 'Iniciado',
+                'Finalizada': 'Finalizado',
+                'Finalizado': 'Finalizado',
+                'No iniciada': 'No iniciado',
+                'No iniciado': 'No iniciado'
+            };
+            return map[normalized] || normalized || 'No iniciado';
+        }
+
+        async function loadJson(path) {
+            const response = await fetch(`${path}?cache=${Date.now()}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        }
+
+        async function safeLoadJson(path) {
+            try {
+                return await loadJson(path);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function buildTasksFromDates(data) {
+            packageMeta = {};
+            tasks = [];
+            const paquetes = Array.isArray(data.paquetes) ? data.paquetes : [];
+            paquetes.forEach(pkg => {
+                if (!pkg || !pkg.id) return;
+                packageMeta[pkg.id] = {
+                    title: pkg.titulo || pkg.title || pkg.id,
+                    leader: pkg.responsable || pkg.leader || '',
+                    start: pkg.inicio || pkg.start || '-',
+                    end: pkg.fin || pkg.end || '-'
+                };
+
+                function addTaskEntry(task, level = 0, parentId = null) {
+                    if (!task || !task.id) return;
+                    tasks.push({
+                        id: task.id,
+                        title: task.titulo || task.title || '',
+                        leader: task.responsable || task.leader || '',
+                        start: task.inicio || task.start || pkg.inicio || pkg.start || '-',
+                        end: task.fin || task.end || pkg.fin || pkg.end || '-',
+                        packageId: pkg.id,
+                        packageTitle: pkg.titulo || pkg.title || '',
+                        status: 'No iniciado',
+                        progress: 0,
+                        level,
+                        parentId
+                    });
+                    const subtasks = Array.isArray(task.subtareas) ? task.subtareas : [];
+                    subtasks.forEach(subtask => addTaskEntry(subtask, level + 1, task.id));
+                }
+
+                const taskList = Array.isArray(pkg.tareas) ? pkg.tareas : [];
+                taskList.forEach(task => addTaskEntry(task, 0, null));
+            });
+        }
+
+        function applyTareasState() {
+            tasks.forEach(task => {
+                const state = store.tareas[task.id] || store.tareas[task.taskId];
+                if (!state) return;
+                if (Array.isArray(state.statusHistory) && state.statusHistory.length > 0) {
+                    task.status = normalizeStatus(state.statusHistory[state.statusHistory.length - 1].status);
+                }
+                if (Array.isArray(state.progressHistory) && state.progressHistory.length > 0) {
+                    task.progress = state.progressHistory[state.progressHistory.length - 1].percentage;
+                }
+            });
+        }
+
+        function applyEntregablesState() {
+            deliverables = Object.values(store.entregables || {}).map(item => ({
+                ...item,
+                deliverableCode: item.deliverableCode || item.deliverableId || '',
+                title: item.title || item.titulo || '',
+                responsable: item.responsable || item.leader || '',
+                status: normalizeStatus(item.status),
+                progress: Array.isArray(item.progressHistory) && item.progressHistory.length > 0
+                    ? item.progressHistory[item.progressHistory.length - 1].percentage
+                    : 0
+            }));
+        }
+
+        function applyConsorcioState() {
+            const excludedNames = new Set(['AYESA']);
+            const data = store.consorcio || { socios: [] };
+            const existingSocios = Array.isArray(data.socios) ? data.socios : [];
+            const names = new Set(existingSocios.filter(s => s.nombre && !excludedNames.has(s.nombre)).map(s => s.nombre));
+            tasks.forEach(task => { if (task.leader && !excludedNames.has(task.leader)) names.add(task.leader); });
+            deliverables.forEach(item => { if (item.responsable && !excludedNames.has(item.responsable)) names.add(item.responsable); });
+            socios = Array.from(names).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' })).map((nombre, index) => {
+                const match = existingSocios.find(s => s.nombre === nombre);
+                return match ? { ...match, id: match.id || `socio-${index}-${nombre.replace(/\W+/g, '_')}` } : {
+                    id: `socio-${index}-${nombre.replace(/\W+/g, '_')}`,
+                    nombre,
+                    contactos: [{ nombre: '', telefono: '', email: '', cargo: '' }]
+                };
+            });
+            store.consorcio = { socios };
+        }
+
+        function render() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+            const dashboard = document.getElementById('dashboardContent');
+            dashboard.innerHTML = '';
+            if (activeTab === 'tareas') {
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Cod.</th>
+                            <th rowspan="2" class="task-column">Tarea</th>
+                            <th rowspan="2">Responsable</th>
+                            <th colspan="2" class="group-header">Fecha</th>
+                            <th rowspan="2">Estado</th>
+                            <th colspan="2" class="group-header">Progreso</th>
+                            <th rowspan="2"></th>
+                        </tr>
+                        <tr>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Real</th>
+                            <th>Teórico</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                `;
+                dashboard.appendChild(table);
+                renderTasks(filterItems(tasks));
+            } else if (activeTab === 'entregables') {
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Tareas asociadas</th>
+                            <th rowspan="2">Cód. Entregable</th>
+                            <th rowspan="2" class="task-column">Entregable</th>
+                            <th rowspan="2">Responsable</th>
+                            <th rowspan="2">Fecha Fin</th>
+                            <th rowspan="2">Estado</th>
+                            <th rowspan="2">Progreso</th>
+                            <th rowspan="2"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                `;
+                dashboard.appendChild(table);
+                renderDeliverables(filterItems(deliverables));
+            } else {
+                renderSocios();
+            }
+            document.getElementById('tab-tareas')?.classList.toggle('active', activeTab === 'tareas');
+            document.getElementById('tab-entregables')?.classList.toggle('active', activeTab === 'entregables');
+            document.getElementById('tab-socios')?.classList.toggle('active', activeTab === 'socios');
+        }
+
+        function renderSocios() {
+            const dashboard = document.getElementById('dashboardContent');
+            const grid = document.createElement('div');
+            grid.className = 'socios-grid';
+            if (!socios.length) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-state';
+                empty.textContent = 'No hay socios disponibles en el filtro de responsables.';
+                dashboard.appendChild(empty);
+                return;
+            }
+
+            const actionsWrapper = document.createElement('div');
+            actionsWrapper.className = 'socios-actions';
+            const copyButton = document.createElement('button');
+            copyButton.type = 'button';
+            copyButton.className = 'copy-emails-btn';
+            copyButton.textContent = 'Copiar Emails';
+            copyButton.onclick = copyAllEmails;
+            actionsWrapper.appendChild(copyButton);
+            dashboard.appendChild(actionsWrapper);
+
+            socios.forEach((socio) => {
+                const card = document.createElement('div');
+                const cardClasses = ['socio-card'];
+                const socioName = String(socio.nombre).trim().toUpperCase();
+                if (socioName === 'AGILIA' || socioName === 'COTESA') {
+                    cardClasses.push('agilia');
+                }
+                card.className = cardClasses.join(' ');
+                const webLabel = socio.webLabel ? escapeHtml(socio.webLabel) : null;
+                const webUrl = socio.webUrl ? escapeHtml(socio.webUrl) : null;
+                const webLink = webLabel && webUrl
+                    ? `<a class="socio-web" href="${webUrl}" target="_blank" rel="noopener noreferrer">${webLabel}</a>`
+                    : '';
+                card.innerHTML = `
+                    <div class="socio-header">
+                        <div><h3>${escapeHtml(socio.nombre)}</h3></div>
+                        ${webLink}
+                    </div>
+                    <div class="contactos-container" id="contactos-${socio.id}"></div>
+                `;
+                grid.appendChild(card);
+                const contactosContainer = card.querySelector(`#contactos-${socio.id}`);
+                socio.contactos = Array.isArray(socio.contactos) ? socio.contactos : [];
+                socio.contactos.forEach((contacto) => {
+                    const contactCard = document.createElement('div');
+                    contactCard.className = 'contact-card';
+                    contactCard.innerHTML = `
+                        <div class="info-row"><span class="info-label">Nombre</span><span class="info-value">${escapeHtml(contacto.nombre)}</span></div>
+                        <div class="info-row"><span class="info-label">Teléfono</span><span class="info-value">${escapeHtml(contacto.telefono)}</span></div>
+                        <div class="info-row"><span class="info-label">Email</span><span class="info-value">${escapeHtml(contacto.email)}</span></div>
+                        <div class="info-row"><span class="info-label">Cargo</span><span class="info-value">${escapeHtml(contacto.cargo)}</span></div>
+                    `;
+                    contactosContainer.appendChild(contactCard);
+                });
+            });
+            dashboard.appendChild(grid);
+        }
+
+        function onSocioFieldChange(socioId, field, value) {
+            const socio = socios.find(s => s.id === socioId);
+            if (!socio) return;
+            socio[field] = value;
+            saveConsorcioState();
+        }
+
+        function copyAllEmails() {
+            const emails = socios
+                .flatMap(socio => Array.isArray(socio.contactos) ? socio.contactos : [])
+                .map(contacto => contacto.email ? contacto.email.trim() : '')
+                .filter(Boolean);
+            if (!emails.length) {
+                showMessage('No hay emails disponibles para copiar.', true);
+                return;
+            }
+            const textToCopy = emails.join('; ');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => showMessage('Emails copiados al portapapeles.'))
+                    .catch(() => fallbackCopyText(textToCopy));
+            } else {
+                fallbackCopyText(textToCopy);
+            }
+        }
+
+        function fallbackCopyText(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showMessage('Emails copiados al portapapeles.');
+                } else {
+                    showMessage('No se pudo copiar los emails automáticamente. Usa Ctrl+C.', true);
+                }
+            } catch (error) {
+                showMessage('No se pudo copiar los emails automáticamente.', true);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function onContactoFieldChange(socioId, contactIndex, field, value) {
+            const socio = socios.find(s => s.id === socioId);
+            if (!socio || !Array.isArray(socio.contactos) || !socio.contactos[contactIndex]) return;
+            socio.contactos[contactIndex][field] = value;
+            saveConsorcioState();
+        }
+
+        function saveConsorcioState() {
+            store.consorcio = { socios };
+            localStorage.setItem('softep-consorcio', JSON.stringify(store.consorcio));
+            saveConsorcioJson();
+        }
+
+        async function saveConsorcioJson() {
+            try {
+                await fetch(SAVE_CONSORCIO_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store.consorcio) });
+            } catch (error) {
+                showMessage('No se pudo guardar consorcio en el servidor.', true);
+            }
+        }
+
+        function populateResponsableFilter() {
+            const selector = document.getElementById('filterLeader');
+            const names = new Set(['todos']);
+            tasks.forEach(task => { if (task.leader) names.add(task.leader); });
+            deliverables.forEach(item => { if (item.responsable) names.add(item.responsable); });
+            const sorted = Array.from(names).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+            selector.innerHTML = '<option value="todos">Todos los Socios</option>' + sorted.filter(n => n !== 'todos').map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+        }
+
+        function populateYearFilter() {
+            const selector = document.getElementById('filterYear');
+            const years = new Set(['']);
+            tasks.forEach(task => {
+                const y = getYearFromString(task.end);
+                if (y) years.add(y);
+            });
+            deliverables.forEach(item => {
+                const y = getYearFromDeliverable(item);
+                if (y) years.add(y);
+            });
+            const sorted = Array.from(years).filter(y => y !== '').sort((a, b) => Number(a) - Number(b));
+            selector.innerHTML = '<option value="">Todos los años</option>' + sorted.map(year => `<option value="${year}">${year}</option>`).join('');
+        }
+
+        function getYearFromString(dateText) {
+            if (!dateText) return null;
+            const isoMatch = dateText.match(/^(\d{4})/);
+            if (isoMatch) return isoMatch[1];
+            const slashMatch = dateText.match(/(\d{4})$/);
+            if (slashMatch) return slashMatch[1];
+            const spanishMatch = dateText.match(/(\d{4})$/);
+            if (spanishMatch) return spanishMatch[1];
+            return null;
+        }
+
+        function getYearFromDeliverable(item) {
+            if (item.deadline) {
+                return getYearFromString(item.deadline);
+            }
+            if (Array.isArray(item.associatedTasks) && item.associatedTasks.length > 0) {
+                const associatedYears = item.associatedTasks.map(code => {
+                    const task = tasks.find(t => t.id === code);
+                    return task ? getYearFromString(task.end) : null;
+                }).filter(Boolean);
+                if (associatedYears.length === 0) return null;
+                return associatedYears.sort()[associatedYears.length - 1];
+            }
+            return null;
+        }
+
+        function setTab(tab) {
+            activeTab = tab;
+            document.getElementById('tab-tareas').classList.toggle('active', tab === 'tareas');
+            document.getElementById('tab-entregables').classList.toggle('active', tab === 'entregables');
+            render();
+        }
+
+        function filterItems(items) {
+            const leader = document.getElementById('filterLeader').value;
+            const year = document.getElementById('filterYear').value;
+            const status = document.getElementById('filterStatus').value;
+            return items.filter(item => {
+                const field = item.leader || item.responsable || '';
+                const leaderMatch = leader === 'todos' || field.toLowerCase().includes(leader.toLowerCase());
+
+                let yearMatch = true;
+                if (year !== '') {
+                    const itemYear = item.id && item.end ? getYearFromString(item.end) : getYearFromDeliverable(item);
+                    yearMatch = itemYear ? Number(itemYear) <= Number(year) : false;
+                }
+
+                const itemStatus = normalizeStatus(item.status || 'No iniciado');
+                const statusMatch = status === 'TODOS' || itemStatus === status;
+                return leaderMatch && yearMatch && statusMatch;
+            });
+        }
+
+        function renderTasks(items) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            if (!items.length) {
+                body.innerHTML = '<tr><td class="task-column" colspan="9" style="text-align:center; padding:30px 0;">No hay tareas que coincidan con el filtro.</td></tr>';
+                return;
+            }
+            const grouped = groupByPackage(items);
+            Object.keys(grouped).sort().forEach(pkg => {
+                const group = grouped[pkg];
+                const packageInfo = packageMeta[pkg] || {};
+                const packageProgress = group.reduce((sum, t) => sum + (t.progress || 0), 0) / group.length;
+                body.innerHTML += `
+                    <tr class="package-row">
+                        <td>${pkg}</td>
+                        <td class="task-column">${escapeHtml(packageInfo.title || 'Paquete ' + pkg)}</td>
+                        <td>${packageInfo.leader ? formatLeaderString(packageInfo.leader) : '-'}</td>
+                        <td>${escapeHtml(packageInfo.start || '-')}</td>
+                        <td>${escapeHtml(packageInfo.end || '-')}</td>
+                        <td></td>
+                        <td>📊 ${Math.round(packageProgress)}%</td>
+                        <td></td>
+                        <td></td>
+                    </tr>`;
+                group.forEach((task, index) => {
+                    let rowClass = index % 2 === 0 ? 'task-row-even' : 'task-row-odd';
+                    const prevTask = group[index - 1];
+                    const nextTask = group[index + 1];
+                    if (task.level && task.level > 0) {
+                        rowClass += ' subtask-row';
+                        if (!prevTask || prevTask.level === 0) rowClass += ' subtask-start';
+                        if (!nextTask || nextTask.level === 0) rowClass += ' subtask-end';
+                    }
+                    const statusOptions = ['No iniciado','Iniciado','Finalizado'].map(option => `<option value="${option}" ${task.status===option ? 'selected' : ''}>${option}</option>`).join('');
+                    const progressValue = task.status === 'Finalizado' ? 100 : task.status === 'No iniciado' ? 0 : (task.progress || 1);
+                    const progressDisabled = task.status === 'Iniciado' ? '' : 'disabled';
+                    const indentStyle = task.level ? `style="padding-left:${task.level * 18}px;"` : '';
+                    body.innerHTML += `
+                        <tr class="${rowClass}">
+                            <td><strong>${escapeHtml(task.id)}</strong></td>
+                            <td class="task-column"><span ${indentStyle}>${escapeHtml(task.title)}</span></td>
+                            <td>${badgeLeader(task.leader)}</td>
+                            <td>${escapeHtml(task.start || '-')}</td>
+                            <td>${escapeHtml(task.end || '-')}</td>
+                            <td><select class="status-select" onchange="onTaskStatusChange('${task.id}', this)">${statusOptions}</select></td>
+                            <td><input id="task-progress-${task.id}" class="progress-input" type="number" min="0" max="99" value="${progressValue}" onchange="onTaskProgressChange('${task.id}', this)" ${progressDisabled}></td>
+                            <td>${shouldShowTheoretical(task) ? calculateTheoreticalProgress(task) + '%' : ''}</td>
+                            <td><button class="comments-btn" onclick="openCommentsModal('${task.id}', 'task')">💬</button></td>
+                        </tr>`;
+                });
+            });
+        }
+
+        function getDeliverablePTGroup(item) {
+            const code = item.deliverableCode || item.deliverableId || item.code || '';
+            const match = String(code).match(/^E(\d+)/);
+            return match ? `PT${match[1]}` : 'PT?';
+        }
+
+        function groupDeliverablesByPackage(items) {
+            const groups = {};
+            items.forEach(item => {
+                const pkg = getDeliverablePTGroup(item);
+                if (!groups[pkg]) groups[pkg] = [];
+                groups[pkg].push(item);
+            });
+            return groups;
+        }
+
+        function renderDeliverables(items) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            if (!items.length) {
+                body.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px 0;">No hay entregables que coincidan con el filtro.</td></tr>';
+                return;
+            }
+            const grouped = groupDeliverablesByPackage(items);
+            Object.keys(grouped).sort().forEach(pkg => {
+                const group = grouped[pkg];
+                const packageInfo = packageMeta[pkg] || {};
+                const packageProgress = group.reduce((sum, i) => sum + (i.progress || 0), 0) / group.length;
+                body.innerHTML += `
+                    <tr class="package-row">
+                        <td><strong>${pkg}</strong></td>
+                        <td class="task-column" colspan="2"><span class="package-title">${escapeHtml(packageInfo.title || pkg)}</span></td>
+                        <td>${formatLeaderString(packageInfo.leader || [...new Set(group.map(i => i.responsable || '')).join(' / ')])}</td>
+                        <td>${escapeHtml(packageInfo.end || '-')}</td>
+                        <td></td>
+                        <td>📊 ${Math.round(packageProgress)}%</td>
+                        <td></td>
+                    </tr>`;
+                group.forEach((item, index) => {
+                    const rowClass = index % 2 === 0 ? 'task-row-even' : 'task-row-odd';
+                    const statusOptions = ['No iniciado','Iniciado','Finalizado'].map(option => `<option value="${option}" ${item.status===option ? 'selected' : ''}>${option}</option>`).join('');
+                    const progressValue = item.status === 'Finalizado' ? 100 : item.status === 'No iniciado' ? 0 : (item.progress || 1);
+                    const progressDisabled = item.status === 'Iniciado' ? '' : 'disabled';
+                    const associatedTasks = Array.isArray(item.associatedTasks) ? item.associatedTasks.join(', ') : (item.associatedTasks || '-');
+                    body.innerHTML += `
+                        <tr class="${rowClass}">
+                            <td>${escapeHtml(associatedTasks)}</td>
+                            <td><strong>${escapeHtml(item.deliverableCode)}</strong></td>
+                            <td class="task-column"><span class="task-title">${escapeHtml(item.title)}</span></td>
+                            <td>${badgeLeader(item.responsable)}</td>
+                            <td>${escapeHtml(item.deadline || packageInfo.end || '-')}</td>
+                            <td><select class="status-select" onchange="onDeliverableStatusChange('${item.deliverableCode}', this)">${statusOptions}</select></td>
+                            <td><input id="deliverable-progress-${item.deliverableCode}" class="progress-input" type="number" min="0" max="99" value="${progressValue}" onchange="onDeliverableProgressChange('${item.deliverableCode}', this)" ${progressDisabled}></td>
+                            <td><button class="comments-btn" onclick="openCommentsModal('${item.deliverableCode}', 'deliverable')">💬</button></td>
+                        </tr>`;
+                });
+            });
+        }
+
+        function badgeLeader(name) {
+            const upper = String(name).toUpperCase();
+            if (upper.includes('AYESA') && !upper.includes('AAS')) {
+                return `<span class="badge-ayesa">${escapeHtml(name)}</span>`;
+            }
+            if (upper.includes('AYESA AAS') || upper.includes('AYESA ASDA')) {
+                return `<span class="badge-ayesa badge-ayesa-asda">${escapeHtml(name)}</span>`;
+            }
+            return escapeHtml(name);
+        }
+
+        function formatLeaderString(value) {
+            if (!value) return '-';
+            return String(value)
+                .split(' / ')
+                .map(name => badgeLeader(name.trim()))
+                .join(' / ');
+        }
+
+        function escapeHtml(text) {
+            return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function groupByPackage(items) {
+            return items.reduce((acc, item) => {
+                const key = item.packageId || 'SIN PAQUETE';
+                acc[key] = acc[key] || [];
+                acc[key].push(item);
+                return acc;
+            }, {});
+        }
+
+        function shouldShowTheoretical(task) {
+            if (task.status === 'Finalizado') return false;
+            if (task.status === 'Iniciado') return true;
+            const start = parseSpanishMonth(task.start);
+            return start ? start < new Date() : false;
+        }
+
+        function calculateTheoreticalProgress(task) {
+            const start = parseSpanishMonth(task.start);
+            const end = parseSpanishMonth(task.end);
+            if (!start || !end || end <= start) return 0;
+            const now = new Date();
+            if (now <= start) return 0;
+            if (now >= end) return 100;
+            return Math.round(((now - start) / (end - start)) * 100);
+        }
+
+        function parseSpanishMonth(dateText) {
+            if (!dateText) return null;
+            const trimmed = String(dateText).trim();
+            // ISO dates like 2025-10-01 or 2025/10/01
+            const isoMatch = trimmed.match(/^(\d{4})[-\/]?(\d{2})[-\/]?(\d{2})$/);
+            if (isoMatch) {
+                return new Date(Number(isoMatch[1]), Number(isoMatch[2]) - 1, Number(isoMatch[3]));
+            }
+            const parts = trimmed.split(/\s+/);
+            if (parts.length === 2) {
+                const monthNames = { ene:0, 'ene.':0, feb:1, mar:2, abr:3, may:4, jun:5, jul:6, ago:7, sep:8, oct:9, nov:10, dic:11, enero:0, febrero:1, marzo:2, abril:3, mayo:4, junio:5, julio:6, agosto:7, septiembre:8, octubre:9, noviembre:10, diciembre:11 };
+                const month = monthNames[parts[0].toLowerCase()];
+                const year = parseInt(parts[1], 10);
+                if (month === undefined || Number.isNaN(year)) return null;
+                return new Date(year, month, 1);
+            }
+            return null;
+        }
+
+        function onTaskStatusChange(taskId, select) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            const newStatus = select.value;
+            const previousProgress = task.progress;
+            task.status = newStatus;
+            if (newStatus === 'Finalizado') task.progress = 100;
+            if (newStatus === 'No iniciado') task.progress = 0;
+            if (newStatus === 'Iniciado' && task.progress === 0) task.progress = 10;
+            saveTaskState(taskId, task, { recordStatus: true, recordProgress: task.progress !== previousProgress });
+            render();
+        }
+
+        function onTaskProgressChange(taskId, input) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            let value = parseInt(input.value, 10);
+            if (Number.isNaN(value)) value = 0;
+            value = Math.max(0, Math.min(99, value));
+            input.value = value;
+            const previousProgress = task.progress;
+            task.progress = value;
+            saveTaskState(taskId, task, { recordStatus: false, recordProgress: task.progress !== previousProgress });
+        }
+
+        function onDeliverableStatusChange(code, select) {
+            const item = deliverables.find(d => d.deliverableCode === code);
+            if (!item) return;
+            const newStatus = select.value;
+            const previousProgress = item.progress;
+            item.status = newStatus;
+            if (newStatus === 'Finalizado') item.progress = 100;
+            if (newStatus === 'No iniciado') item.progress = 0;
+            if (newStatus === 'Iniciado' && item.progress === 0) item.progress = 10;
+            saveDeliverableState(code, item, { recordStatus: true, recordProgress: item.progress !== previousProgress });
+            render();
+        }
+
+        function onDeliverableProgressChange(code, input) {
+            const item = deliverables.find(d => d.deliverableCode === code);
+            if (!item) return;
+            let value = parseInt(input.value, 10);
+            if (Number.isNaN(value)) value = 0;
+            value = Math.max(0, Math.min(99, value));
+            input.value = value;
+            const previousProgress = item.progress;
+            item.progress = value;
+            saveDeliverableState(code, item, { recordStatus: false, recordProgress: item.progress !== previousProgress });
+        }
+
+        function saveTaskState(taskId, task, options = { recordStatus: true, recordProgress: true }) {
+            if (!store.tareas[taskId]) {
+                store.tareas[taskId] = { taskId, title: task.title, leader: task.leader, progressHistory: [], statusHistory: [], commentHistory: [] };
+            }
+            const state = store.tareas[taskId];
+            state.statusHistory = state.statusHistory || [];
+            state.progressHistory = state.progressHistory || [];
+            if (options.recordStatus) {
+                state.statusHistory.push({ timestamp: new Date().toISOString(), status: task.status });
+            }
+            if (options.recordProgress) {
+                state.progressHistory.push({ timestamp: new Date().toISOString(), percentage: task.progress });
+            }
+            localStorage.setItem('softep-tareas', JSON.stringify(store.tareas));
+            saveTasksJson();
+        }
+
+        function saveDeliverableState(code, item, options = { recordStatus: true, recordProgress: true }) {
+            if (!store.entregables[code]) {
+                store.entregables[code] = { deliverableCode: code, title: item.title, responsable: item.responsable, progressHistory: [], statusHistory: [], commentHistory: [] };
+            }
+            const state = store.entregables[code];
+            state.statusHistory = state.statusHistory || [];
+            state.progressHistory = state.progressHistory || [];
+            if (options.recordStatus) {
+                state.statusHistory.push({ timestamp: new Date().toISOString(), status: item.status });
+            }
+            if (options.recordProgress) {
+                state.progressHistory.push({ timestamp: new Date().toISOString(), percentage: item.progress });
+            }
+            localStorage.setItem('softep-entregables', JSON.stringify(store.entregables));
+            saveEntregablesJson();
+        }
+
+        function openCommentsModal(code, type) {
+            currentModal = { code, type };
+            const titleEl = document.getElementById('modalTitle');
+            const statusList = document.getElementById('statusList');
+            const progressList = document.getElementById('progressList');
+            const commentsList = document.getElementById('commentsList');
+            const record = type === 'task' ? tasks.find(t => t.id === code) : deliverables.find(d => d.deliverableCode === code);
+            const storage = type === 'task' ? store.tareas[code] : store.entregables[code];
+            titleEl.textContent = `${code} - ${record ? record.title : 'Elemento'}`;
+            statusList.innerHTML = '';
+            progressList.innerHTML = '';
+            commentsList.innerHTML = '';
+            if (storage) {
+                if (Array.isArray(storage.statusHistory)) {
+                    storage.statusHistory.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(entry => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `<span class="comment-date">${new Date(entry.timestamp).toLocaleString()}</span><div class="comment-text"><strong>Estado:</strong> ${escapeHtml(entry.status || '')}</div>`;
+                        statusList.appendChild(div);
+                    });
+                }
+                if (Array.isArray(storage.progressHistory)) {
+                    storage.progressHistory.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(entry => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `<span class="comment-date">${new Date(entry.timestamp).toLocaleString()}</span><div class="comment-text"><strong>Progreso:</strong> ${escapeHtml(String(entry.percentage || 0))}%</div>`;
+                        progressList.appendChild(div);
+                    });
+                }
+                if (Array.isArray(storage.commentHistory)) {
+                    storage.commentHistory.slice().reverse().forEach(entry => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `<span class="comment-date">${new Date(entry.timestamp).toLocaleString()}</span><div class="comment-text">${escapeHtml(entry.comment)}</div>`;
+                        commentsList.appendChild(div);
+                    });
+                }
+            }
+            document.getElementById('newComment').value = '';
+            document.getElementById('commentsModal').style.display = 'flex';
+        }
+
+        function closeCommentsModal() {
+            document.getElementById('commentsModal').style.display = 'none';
+            currentModal = { code: null, type: 'task' };
+        }
+
+        function addComment() {
+            const text = document.getElementById('newComment').value.trim();
+            if (!text || !currentModal.code) return;
+            const storage = currentModal.type === 'task' ? store.tareas : store.entregables;
+            if (!storage[currentModal.code]) {
+                const record = currentModal.type === 'task' ? tasks.find(t => t.id === currentModal.code) : deliverables.find(d => d.deliverableCode === currentModal.code);
+                storage[currentModal.code] = {
+                    taskId: currentModal.code,
+                    title: record ? record.title : '',
+                    leader: record ? record.leader || record.responsable : '',
+                    progressHistory: [],
+                    statusHistory: [],
+                    commentHistory: []
+                };
+            }
+            storage[currentModal.code].commentHistory = storage[currentModal.code].commentHistory || [];
+            storage[currentModal.code].commentHistory.push({ timestamp: new Date().toISOString(), comment: text });
+            if (currentModal.type === 'task') {
+                localStorage.setItem('softep-tareas', JSON.stringify(store.tareas));
+                saveTasksJson();
+            } else {
+                localStorage.setItem('softep-entregables', JSON.stringify(store.entregables));
+                saveEntregablesJson();
+            }
+            openCommentsModal(currentModal.code, currentModal.type);
+        }
+
+        async function saveTasksJson() {
+            try {
+                await fetch(SAVE_TASKS_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store.tareas) });
+            } catch (error) {
+                showMessage('No se pudo guardar tareas en el servidor.', true);
+            }
+        }
+
+        async function saveEntregablesJson() {
+            try {
+                await fetch(SAVE_ENTREGABLES_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store.entregables) });
+            } catch (error) {
+                showMessage('No se pudo guardar entregables en el servidor.', true);
+            }
+        }
+
+        function showMessage(text, isError = false) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.style.display = 'block';
+            box.style.background = isError ? '#fee2e2' : '#fef9c3';
+            box.style.borderColor = isError ? '#fca5a5' : '#fbbf24';
+        }
+
+        async function init() {
+            try {
+                const [datesData, tareasData, entregablesData, consorcioData] = await Promise.all([
+                    loadJson('dates.json'),
+                    loadJson('tareas.json'),
+                    loadJson('entregables.json'),
+                    safeLoadJson('consorcioInfo.json')
+                ]);
+                store.dates = datesData.paquetes || [];
+                store.tareas = tareasData || {};
+                store.entregables = entregablesData || {};
+                store.consorcio = consorcioData || { socios: [] };
+                buildTasksFromDates(datesData);
+                applyTareasState();
+                applyEntregablesState();
+                applyConsorcioState();
+                populateResponsableFilter();
+                populateYearFilter();
+                render();
+            } catch (error) {
+                showMessage('Error cargando datos. Asegúrate de servir los archivos desde un servidor local.', true);
+                console.error(error);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

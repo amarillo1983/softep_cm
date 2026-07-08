@@ -1,0 +1,88 @@
+{
+  "socios": [
+    {
+      "id": "socio-agilia",
+      "nombre": "AGILIA",
+      "logo": "agilia.png",
+      "webLabel": "agilia.com",
+      "webUrl": "https://www.agilia.com",
+      "contactos": [
+        {
+          "nombre": "Emilio García",
+          "telefono": "698 587 845",
+ "email": "emilio.garcia@agilia.com",
+          "cargo": "Jefe de Proyecto"
+        },
+        {
+          "nombre": "Marina Soto",
+          "telefono": "661 234 987",
+          "email": "marina.soto@agilia.com",
+          "cargo": "Coordinadora Técnica"
+        }
+      ]
+    },
+    {
+      "id": "socio-cotesa",
+      "nombre": "COTESA",
+      "logo": "cotesa.png",
+      "webLabel": "cotesa.com",
+      "webUrl": "https://www.cotesa.com",
+      "contactos": [
+        {
+          "nombre": "Jorge Pérez",
+          "telefono": "644 912 330",
+          "email": "jorge.perez@cotesa.com",
+          "cargo": "Director de Innovación"
+        },
+        {
+          "nombre": "Clara Ruiz",
+          "telefono": "655 774 221",
+          "email": "clara.ruiz@cotesa.com",
+          "cargo": "Responsable de Operaciones"
+        }
+      ]
+    },
+    {
+      "id": "socio-balidea",
+      "nombre": "BALIDEA",
+      "logo": "balidea.png",
+      "webLabel": "balidea.com",
+      "webUrl": "https://www.balidea.com",
+      "contactos": [
+        {
+          "nombre": "Nuria Castells",
+          "telefono": "677 889 112",
+          "email": "nuria.castells@balidea.com",
+          "cargo": "Consultora Sénior"
+        },
+        {
+          "nombre": "Víctor Ramos",
+          "telefono": "622 110 556",
+          "email": "victor.ramos@balidea.com",
+          "cargo": "Analista de Datos"
+        }
+      ]
+    },
+    {
+      "id": "socio-td",
+      "nombre": "TD",
+      "logo": "td.png",
+      "webLabel": "td.com",
+      "webUrl": "https://www.td.com",
+      "contactos": [
+        {
+          "nombre": "Sara Molina",
+          "telefono": "699 442 780",
+          "email": "sara.molina@td.com",
+          "cargo": "Gestora de Proyecto"
+        },
+        {
+          "nombre": "Alberto Núñez",
+          "telefono": "633 558 914",
+          "email": "alberto.nunez@td.com",
+          "cargo": "Especialista Ciberseguridad"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "proyecto": "SOFTEP",
+  "inicio_proyecto": "2025-10-01",
+  "paquetes": [
+    {
+      "id": "PT1",
+      "titulo": "Investigación del estado del arte, definición de especificaciones y casos de uso",
+      "responsable": "COTESA",
+      "inicio": "2025-10-01",
+      "fin": "2026-03-31",
+      "tareas": [
+        { "id": "T1.1", "titulo": "Definición de los procesos y productos de la factoría de software Value Stream Digital Twin", "responsable": "AYESA", "inicio": "2025-10-01", "fin": "2026-03-31" },
+        { "id": "T1.2", "titulo": "Análisis Normativo Avanzado (Cybersecurity Act, AI Act, ISO 27001/42001)", "responsable": "COTESA", "inicio": "2025-10-01", "fin": "2026-03-31" },
+        { "id": "T1.3", "titulo": "Investigación en Marco de Ética, Transparencia y Gobernanza de la IA", "responsable": "AYESA", "inicio": "2025-10-01", "fin": "2026-03-31" },
+        { "id": "T1.4", "titulo": "Modelado As-Is mediante Minería de Procesos", "responsable": "AGILIA", "inicio": "2025-10-01", "fin": "2026-03-31" },
+        { "id": "T1.5", "titulo": "Diseño To-Be y Adaptación al Espacio de Datos de la FS", "responsable": "BALIDEA", "inicio": "2025-10-01", "fin": "2026-03-31" }
+      ]
+    },
+    {
+      "id": "PT2",
+      "titulo": "Investigación del Gemelo Digital Vivo y Gestión de Datos en Tiempo Real",
+      "responsable": "AGILIA",
+      "inicio": "2026-03-01",
+      "fin": "2028-06-30",
+      "tareas": [
+        { "id": "T2.1", "titulo": "Investigación en del Metamodelo y Arquitectura del Gemelo", "responsable": "AGILIA", "inicio": "2026-03-01", "fin": "2027-12-31" },
+        { "id": "T2.2", "titulo": "Investigación en mecanismos de Ingesta de Eventos y Registro de Esquemas", "responsable": "BALIDEA", "inicio": "2026-03-01", "fin": "2027-12-31" },
+        { "id": "T2.3", "titulo": "Extracción de conocimiento y preparación de datos", "responsable": "AGILIA", "inicio": "2026-03-01", "fin": "2027-12-31" },
+        { "id": "T2.4", "titulo": "Investigación para el despliegue Operativo del Grafo del Gemelo", "responsable": "AYESA", "inicio": "2026-03-01", "fin": "2027-12-31" },
+        { "id": "T2.5", "titulo": "Criterios legales y ético, Ciberseguridad, Privacidad y Compliance", "responsable": "TD", "inicio": "2026-03-01", "fin": "2027-12-31" },
+        { "id": "T2.6", "titulo": "Investigación en técnicas de visualización y presentación de datos", "responsable": "COTESA", "inicio": "2026-03-01", "fin": "2028-06-30" }
+      ]
+    },
+    {
+      "id": "PT3",
+      "titulo": "Investigación del Núcleo de Simulación, Predicción y Observabilidad del Gemelo Digital",
+      "responsable": "AYESA",
+      "inicio": "2026-03-01",
+      "fin": "2027-12-31",
+      "tareas": [
+        { "id": "T3.1", "titulo": "Investigación Exploratoria en Motores de Simulación Orientados a Eventos", "responsable": "AYESA", "inicio": "2026-03-01", "fin": "2027-08-31" },
+        { "id": "T3.2", "titulo": "Investigación en algoritmos Predictivos de Productividad y Riesgo", "responsable": "AYESA", "inicio": "2026-04-01", "fin": "2027-09-30" },
+        { "id": "T3.3", "titulo": "Investigación de Mecanismos de Interoperabilidad y Federación de Gemelos Digitales", "responsable": "AYESA", "inicio": "2026-06-01", "fin": "2027-10-31" },
+        { "id": "T3.4", "titulo": "Investigación en Arquitecturas de Visualización Streaming y Dashboards Cognitivos", "responsable": "AYESA", "inicio": "2026-08-01", "fin": "2027-11-30" },
+        { "id": "T3.5", "titulo": "Desarrollo Preliminar de Técnicas NLG para Informes Explicables", "responsable": "AYESA", "inicio": "2026-08-01", "fin": "2027-12-31" },
+        { "id": "T3.6", "titulo": "Investigación Basal en Observabilidad y Ciberresiliencia del Gemelo Digital", "responsable": "TD", "inicio": "2026-04-01", "fin": "2027-12-31" }
+      ]
+    },
+    {
+      "id": "PT4",
+      "titulo": "Investigación de sistemas autónomos para la mejora estratégica de la factoría de software",
+      "responsable": "BALIDEA",
+      "inicio": "2026-10-01",
+      "fin": "2028-06-30",
+      "tareas": [
+        { 
+          "id": "T4.1",
+         "titulo": "Agentes de apoyo al ciclo inicial del desarrollo de software",
+         "responsable": "COTESA",
+         "inicio": "2026-10-01",
+         "fin": "2028-04-30",
+         "subtareas": [
+            { "id": "T4.1.1", "titulo": "Agente de Análisis Inteligente y Validación Conversacional de Requisitos", "responsable":"AYESA", "inicio": "2026-10-01", "fin": "2028-04-30"},
+            { "id": "T4.1.2", "titulo": "Agente de Estimación de Esfuerzo y Plazo basado en RL", "responsable":"BALIDEA", "inicio": "2026-10-01", "fin": "2028-04-30" },
+            { "id": "T4.1.3", "titulo": " Agente de Asignación Dinámica de Recursos y Emparejamiento de Desarrolladores", "responsable":"COTESA", "inicio": "2026-10-01", "fin": "2028-04-30" }
+          ] 
+        },
+        { 
+          "id": "T4.2",
+          "titulo": "Agentes de aprendizaje y adaptación en tiempo de ejecución",
+          "responsable": "BALIDEA",
+          "inicio": "2026-10-01",
+          "fin": "2028-04-30",
+          "subtareas": [
+            { "id": "T4.2.1", "titulo": "Agente de Aprendizaje continuo Post-Sprint", "responsable":"BALIDEA", "inicio": "2026-10-01", "fin": "2028-04-30"},
+            { "id": "T4.2.2", "titulo": "Agente predictivo para el análisis de datos sobre grandes volúmenes de datos", "responsable":"AGILIA", "inicio": "2026-10-01", "fin": "2028-04-30" },
+            { "id": "T4.2.3", "titulo": " Agente de Evaluación de Impacto de Cambios", "responsable":"AYESA", "inicio": "2026-10-01", "fin": "2028-04-30" }
+          ]
+        },
+        { 
+          "id": "T4.3",
+          "titulo": "Agentes para el aseguramiento de la seguridad, cumplimiento normativo y sostenibilidad",
+          "responsable": "AGILIA",
+          "inicio": "2026-10-01",
+          "fin": "2028-04-30",
+          "subtareas": [
+            { "id": "T4.3.1", "titulo": " Agente Sentinel DevSecOps para Detección de Anomalías", "responsable":"AYESA", "inicio": "2026-10-01", "fin": "2028-04-30"},
+            { "id": "T4.3.2", "titulo": "Agente de optimización energética en infraestructuras IT", "responsable":"AGILIA", "inicio": "2026-10-01", "fin": "2028-04-30" },
+            { "id": "T4.3.3", "titulo": "Agente de Auditoría Continua de Cumplimiento (AI Act, ISO 42001)", "responsable":"TD", "inicio": "2026-10-01", "fin": "2028-04-30" }
+          ]
+        },
+        { 
+          "id": "T4.4",
+          "titulo": "Integración Arquitectónica de Agentes Autónomos en el Gemelo Digital",
+          "responsable": "AYESA",
+          "inicio": "2027-10-01",
+          "fin": "2028-06-30"
+        }
+      ]
+    },
+    {
+      "id": "PT5",
+      "titulo": "Validación en casos de uso de tecnologías profundas STEP",
+      "responsable": "AYESA",
+      "inicio": "2028-01-01",
+      "fin": "2028-06-30",
+      "tareas": [
+        { "id": "T5.1", "titulo": "Despliegue e Interconexion de Gemelos digitales pluri regionales", "responsable": "AYESA", "inicio": "2028-01-01", "fin": "2028-06-30" },
+        { "id": "T5.2", "titulo": "Ahorro energético en el desarrollo de software", "responsable": "COTESA", "inicio": "2028-01-01", "fin": "2028-06-30" },
+        { "id": "T5.3", "titulo": "Evaluación del impacto en la productividad y la mejora continua", "responsable": "AGILIA", "inicio": "2028-01-01", "fin": "2028-06-30" },
+        { "id": "T5.4", "titulo": "Validación de criterios éticos, de explicabilidad y legales de la IA", "responsable": "TD", "inicio": "2028-01-01", "fin": "2028-06-30" }
+      ]
+    }
+  ]
+}
+
+

@@ -1,0 +1,259 @@
+{
+  "E1.1": {
+    "deliverableId": "E1.1",
+    "title": "Especificaciones Funcionales y Técnicas de los procesos de una Factoría Software",
+    "leader": "AYESA",
+    "associatedTasks": [
+      "T1.1",
+      "T1.5"
+    ],
+    "progressHistory": [
+      {
+        "timestamp": "2026-05-13T13:58:10.420Z",
+        "percentage": 10
+      },
+      {
+        "timestamp": "2026-05-13T13:58:14.088Z",
+        "percentage": 30
+      }
+    ],
+    "commentHistory": [
+      {
+        "timestamp": "2026-05-13T13:58:35.435Z",
+        "comment": "Hola, primer comentario de entregables"
+      }
+    ],
+    "statusHistory": [
+      {
+        "timestamp": "2025-10-01T08:00:00.000Z",
+        "status": "Pendiente"
+      },
+      {
+        "timestamp": "2026-05-13T13:58:10.420Z",
+        "status": "Iniciado"
+      }
+    ]
+  },
+  "E1.2": {
+    "deliverableId": "E1.2",
+    "title": "Especificaciones de Normativa, Ética y Ciberseguridad",
+    "leader": "COTESA",
+    "associatedTasks": [
+      "T1.2",
+      "T1.3"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E1.3": {
+    "deliverableId": "E1.3",
+    "title": "Modelos \"As-Is\" y \"To-Be\"",
+    "leader": "BALIDEA",
+    "associatedTasks": [
+      "T1.4",
+      "T1.5"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E1.4": {
+    "deliverableId": "E1.4",
+    "title": "Catálogo de casos de uso y KPIs",
+    "leader": "AGILIA",
+    "associatedTasks": [
+      "T1.1",
+      "T1.4"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "H1.1": {
+    "deliverableId": "H1.1",
+    "title": "Hito: Finalización del análisis de estado del arte, especificaciones y requisitos, modelos AsIs/ToBe, Casos de Uso",
+    "leader": "COTESA",
+    "associatedTasks": [
+      "Cierre PT1"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E2.1": {
+    "deliverableId": "E2.1",
+    "title": "Metamodelo y arquitectura del Gemelo Digital: entradas, salidas y modelado interno",
+    "leader": "AGILIA",
+    "associatedTasks": [
+      "T2.1",
+      "T2.3"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E2.2": {
+    "deliverableId": "E2.2",
+    "title": "Entorno operativo del modelo digital: Microservicios, despliegue y observabilidad",
+    "leader": "AGILIA",
+    "associatedTasks": [
+      "T2.2",
+      "T2.4"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E2.3": {
+    "deliverableId": "E2.3",
+    "title": "Entorno normativo y ético del Modelo Digital",
+    "leader": "TD",
+    "associatedTasks": [
+      "T2.5"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E2.4": {
+    "deliverableId": "E2.4",
+    "title": "Capa de visualización operacional del Modelo Digital",
+    "leader": "COTESA",
+    "associatedTasks": [
+      "T2.6"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E3.1": {
+    "deliverableId": "E3.1",
+    "title": "Pipeline de experimentación de modelos ML/RL",
+    "leader": "AYESA",
+    "associatedTasks": [
+      "T3.1",
+      "T3.2"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E3.2": {
+    "deliverableId": "E3.2",
+    "title": "Informe de técnicas y herramientas para la implementación de la capa de presentación y visualización",
+    "leader": "AYESA",
+    "associatedTasks": [
+      "T3.4"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E3.3": {
+    "deliverableId": "E3.3",
+    "title": "Informe métodos de generación de texto explicativo a partir de datos cuantitativos",
+    "leader": "AYESA",
+    "associatedTasks": [
+      "T3.5"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E4.1": {
+    "deliverableId": "E4.1",
+    "title": "Diseño funcional y técnico de agentes autónomos",
+    "leader": "BALIDEA",
+    "associatedTasks": [
+      "T4.1.x",
+      "T4.2.x",
+      "T4.3.x"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E4.2": {
+    "deliverableId": "E4.2",
+    "title": "Modelos entrenados y prototipos funcionales validados en entorno controlado",
+    "leader": "COTESA",
+    "associatedTasks": [
+      "T4.1.x",
+      "T4.2.x",
+      "T4.3.1",
+      "T4.3.2"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E4.3": {
+    "deliverableId": "E4.3",
+    "title": "Marco de integración arquitectónica de agentes en el gemelo digital",
+    "leader": "AYESA",
+    "associatedTasks": [
+      "T4.4"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E4.4": {
+    "deliverableId": "E4.4",
+    "title": "Informe de cumplimiento, auditoría y sostenibilidad",
+    "leader": "TD",
+    "associatedTasks": [
+      "T4.3.2",
+      "T4.3.3"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E5.1": {
+    "deliverableId": "E5.1",
+    "title": "Especificación de Arquitectura y Protocolo de Federación de Gemelos Digitales",
+    "leader": "AYESA",
+    "associatedTasks": [
+      "T5.1",
+      "T3.3"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E5.2": {
+    "deliverableId": "E5.2",
+    "title": "Informe de Eficiencia Energética, Métricas y Huella de Carbono",
+    "leader": "COTESA",
+    "associatedTasks": [
+      "T5.2"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E5.3": {
+    "deliverableId": "E5.3",
+    "title": "Informe de Métricas Operativas para Validación de Productividad",
+    "leader": "AGILIA",
+    "associatedTasks": [
+      "T5.3"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "E5.4": {
+    "deliverableId": "E5.4",
+    "title": "Protocolo de Verificación de Explicabilidad, Equidad y Cumplimiento Legal de Modelos IA",
+    "leader": "TD",
+    "associatedTasks": [
+      "T5.4"
+    ],
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  }
+}

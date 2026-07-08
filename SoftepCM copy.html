@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SOFTEP Interactive Dashboard</title>
+    <style>
+        :root { --ayesa-blue: #005492; --accent: #e67e22; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
+        .dashboard { max-width: 1600px; margin: auto; }
+        .controls { background: white; padding: 14px 18px; border-radius: 12px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.06); margin-bottom: 16px; }
+        .controls-left { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        .controls-right { display: flex; gap: 10px; }
+        .controls strong { font-size: 13px; color: #444; }
+        select, input, button { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+        .tab-btn { background: #b9d8f1; color: #003f7d; border: 1px solid transparent; cursor: pointer; padding: 8px 14px; border-radius: 8px; transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; }
+        .tab-btn:hover { background: #94c4eb; }
+        .tab-btn.active { background: #003f7d; color: white; border-color: #002d58; box-shadow: 0 6px 12px rgba(0, 83, 146, 0.24); transform: translateY(-1px); }
+        .tab-btn.active:hover { background: #002a53; }
+        .table-container { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        th { background: #1f3d61; text-align: left; padding: 5px 8px; border-bottom: 1px solid #0f2a4d; font-size: 13px; color: white; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; vertical-align: bottom; line-height: 1.2; }
+        td { padding: 4px 8px; border-bottom: 1px solid #e6ecf4; font-size: 13px; line-height: 1.2; }
+        .group-header { text-align: center; color: white; border-bottom: 1px solid white; }
+        thead tr:first-child th.group-header { border-bottom: 1px solid white; }
+        th:nth-child(n+3), td:nth-child(n+3) { text-align: center; }
+        thead tr:last-child th { text-align: center; }
+        .theoretical-column { width: 70px; max-width: 70px; white-space: nowrap; text-align: right; }
+        .real-progress-cell { width: 90px; max-width: 90px; }
+        .comment-cell { width: 40px; text-align: center; }
+        .comments-btn { margin: 0; padding: 5px 8px; font-size: 12px; }
+        tr:hover { background: #f6f8fb; }
+        .badge-ayesa { background: #eaf4ff; color: #005492; padding: 3px 7px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+        .badge-ayesa-asda { background: #005492; color: white; border: 1px solid #005492; padding: 3px 7px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+        .package-row { background: #a3bedc; font-weight: bold; }
+        .package-row td { border-bottom: 2px solid #7d9fca; }
+        .task-row-even { background: #ffffff; }
+        .task-row-odd { background: #dfe8f7; }
+        .status-select { width: 100%; max-width: 140px; box-sizing: border-box; margin-top: 4px; padding: 6px 8px; border: 1px solid #cdd7e6; border-radius: 6px; font-size: 13px; }
+        .progress-input { width: 55px; min-width: 55px; box-sizing: border-box; margin-top: 4px; padding: 7px 8px; border: 1px solid #ddd; border-radius: 6px; text-align: right; font-size: 13px; }
+        .comments-btn { margin-left: 8px; padding: 6px 8px; border: 1px solid #ddd; background: #fff; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .comments-btn:hover { background: #f8f9ff; }
+        .task-title { display: inline-block; max-width: 92ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+        .package-title { display: inline-block; max-width: 92ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+        .task-column { min-width: 92ch; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: auto; padding: 20px; border-radius: 12px; max-width: 800px; width: 90%; top: 50%; left: 50%; transform: translate(-50%, -50%); position: fixed; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; }
+        .modal-header > div { flex: 1; min-width: 0; }
+        .modal-header h2 { margin: 0; color: var(--ayesa-blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
+        .modal-subtitle { margin: 5px 0 0 0; color: #666; font-size: 14px; font-weight: normal; }
+        .close-modal { font-size: 28px; font-weight: bold; cursor: pointer; color: #aaa; }
+        .close-modal:hover { color: #000; }
+        .comments-list { max-height: 300px; overflow-y: auto; margin-bottom: 15px; }
+        .comment-item { background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 3px solid var(--ayesa-blue); }
+        .comment-date { font-size: 12px; color: #666; font-weight: bold; }
+        .comment-text { font-size: 13px; margin-top: 5px; color: #333; }
+        .history-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+        .history-panel { flex: 1; min-width: 220px; }
+        .history-panel .comments-list { max-height: 220px; }
+        .comments-section { margin-bottom: 20px; }
+        .history-panel h3, .comments-section h3 { margin: 0 0 10px 0; color: var(--ayesa-blue); font-size: 16px; }
+        .comment-input-section { display: flex; flex-direction: column; gap: 10px; }
+        .comment-textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-family: 'Segoe UI', sans-serif; min-height: 80px; resize: vertical; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
+        .modal-btn { padding: 10px 16px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer; font-size: 13px; }
+        .modal-btn-add { background: var(--ayesa-blue); color: white; border: none; }
+        .modal-btn-add:hover { opacity: 0.9; }
+        .modal-btn-cancel { background: white; }
+        .modal-btn-cancel:hover { background: #f8f9ff; }
+        .cabecera-proyecto { display: flex; justify-content: space-between; align-items: center; padding: 0 30px; background-color: #fafcfc; height: 72px; width: 100%; box-sizing: border-box; border-bottom: 1px solid #e0e0e0; margin-bottom: 12px; gap: 16px; }
+        .header-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .softep-logo { height: 56px; width: auto; display: block; }
+        .nombre-proyecto { color: rgb(8, 73, 120); font-family: 'Arial Black', sans-serif; font-size: 32px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+        .contenedor-logos img { height: 26px; width: auto; opacity: 0.8; transition: opacity 0.3s; }
+        .contenedor-logos img:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="cabecera-proyecto">
+            <div class="header-brand">
+                <img class="softep-logo" src="logotipos/softep.png" alt="Logotipo SOFTEP">
+                <h1 class="nombre-proyecto">SOFTEP</h1>
+            </div>
+            <div class="contenedor-logos">
+                <img src="logotipos/empresas.png" alt="Logos de empresas">
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="controls-left">
+                <strong>Filtrar por Responsable:</strong>
+                <select id="filterLeader" onchange="render()">
+                    <option value="todos">Todos los Socios</option>
+                </select>
+                <strong>Filtrar por Año:</strong>
+                <select id="filterYear" onchange="render()">
+                    <option value="">Todos los años</option>
+                </select>
+                <strong>Filtrar por Estado:</strong>
+                <select id="filterStatus" onchange="render()">
+                    <option value="TODOS">Todos los estados</option>
+                    <option value="No iniciado">No iniciado</option>
+                    <option value="Iniciado">Iniciado</option>
+                    <option value="Finalizado">Finalizado</option>
+                </select>
+            </div>
+            <div class="controls-right">
+                <button id="tab-tareas" class="tab-btn active" onclick="setTab('tareas')">TAREAS</button>
+                <button id="tab-entregables" class="tab-btn" onclick="setTab('entregables')">ENTREGABLES</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="dashboardTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="messageBox" class="message-box"></div>
+    </div>
+
+    <div id="commentsModal" class="modal" onclick="if(event.target===this) closeCommentsModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-subtitle">Estado, progreso y comentarios del elemento seleccionado</p>
+                </div>
+                <span class="close-modal" onclick="closeCommentsModal()">&times;</span>
+            </div>
+            <div class="history-row">
+                <div class="history-panel">
+                    <h3>Estado</h3>
+                    <div id="statusList" class="comments-list"></div>
+                </div>
+                <div class="history-panel">
+                    <h3>Progreso</h3>
+                    <div id="progressList" class="comments-list"></div>
+                </div>
+            </div>
+            <div class="comments-section">
+                <h3>Comentarios</h3>
+                <div id="commentsList" class="comments-list"></div>
+            </div>
+            <textarea id="newComment" class="comment-textarea" placeholder="Añade un nuevo comentario..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeCommentsModal()">Cerrar</button>
+                <button class="modal-btn modal-btn-add" onclick="addComment()">Añadir comentario</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SAVE_TASKS_ENDPOINT = `${window.location.origin}/save-tareas`;
+        const SAVE_ENTREGABLES_ENDPOINT = `${window.location.origin}/save-entregables`;
+
+        let store = { dates: [], tareas: {}, entregables: {} };
+        let packageMeta = {};
+        let tasks = [];
+        let deliverables = [];
+        let activeTab = 'tareas';
+        let currentModal = { code: null, type: 'task' };
+
+        function normalizeStatus(status) {
+            const normalized = (status || '').trim();
+            const map = {
+                'Iniciada': 'Iniciado',
+                'Iniciado': 'Iniciado',
+                'Finalizada': 'Finalizado',
+                'Finalizado': 'Finalizado',
+                'No iniciada': 'No iniciado',
+                'No iniciado': 'No iniciado'
+            };
+            return map[normalized] || normalized || 'No iniciado';
+        }
+
+        async function loadJson(path) {
+            const response = await fetch(`${path}?cache=${Date.now()}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        }
+
+        function buildTasksFromDates(data) {
+            packageMeta = {};
+            tasks = [];
+            const paquetes = Array.isArray(data.paquetes) ? data.paquetes : [];
+            paquetes.forEach(pkg => {
+                if (!pkg || !pkg.id) return;
+                packageMeta[pkg.id] = {
+                    title: pkg.titulo || pkg.title || pkg.id,
+                    leader: pkg.responsable || pkg.leader || '',
+                    start: pkg.inicio || pkg.start || '-',
+                    end: pkg.fin || pkg.end || '-'
+                };
+                const taskList = Array.isArray(pkg.tareas) ? pkg.tareas : [];
+                taskList.forEach(task => {
+                    if (!task || !task.id) return;
+                    tasks.push({
+                        id: task.id,
+                        title: task.titulo || task.title || '',
+                        leader: task.responsable || task.leader || '',
+                        start: task.inicio || task.start || pkg.inicio || pkg.start || '-',
+                        end: task.fin || task.end || pkg.fin || pkg.end || '-',
+                        packageId: pkg.id,
+                        packageTitle: pkg.titulo || pkg.title || '',
+                        status: 'No iniciado',
+                        progress: 0
+                    });
+                });
+            });
+        }
+
+        function applyTareasState() {
+            tasks.forEach(task => {
+                const state = store.tareas[task.id] || store.tareas[task.taskId];
+                if (!state) return;
+                if (Array.isArray(state.statusHistory) && state.statusHistory.length > 0) {
+                    task.status = normalizeStatus(state.statusHistory[state.statusHistory.length - 1].status);
+                }
+                if (Array.isArray(state.progressHistory) && state.progressHistory.length > 0) {
+                    task.progress = state.progressHistory[state.progressHistory.length - 1].percentage;
+                }
+            });
+        }
+
+        function applyEntregablesState() {
+            deliverables = Object.values(store.entregables || {}).map(item => ({
+                ...item,
+                deliverableCode: item.deliverableCode || item.deliverableId || '',
+                title: item.title || item.titulo || '',
+                responsable: item.responsable || item.leader || '',
+                status: normalizeStatus(item.status),
+                progress: Array.isArray(item.progressHistory) && item.progressHistory.length > 0
+                    ? item.progressHistory[item.progressHistory.length - 1].percentage
+                    : 0
+            }));
+        }
+
+        function populateResponsableFilter() {
+            const selector = document.getElementById('filterLeader');
+            const names = new Set(['todos']);
+            tasks.forEach(task => { if (task.leader) names.add(task.leader); });
+            deliverables.forEach(item => { if (item.responsable) names.add(item.responsable); });
+            const sorted = Array.from(names).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+            selector.innerHTML = '<option value="todos">Todos los Socios</option>' + sorted.filter(n => n !== 'todos').map(name => `<option value="${name}">${name}</option>`).join('');
+        }
+
+        function populateYearFilter() {
+            const selector = document.getElementById('filterYear');
+            const years = new Set(['']);
+            tasks.forEach(task => {
+                const y = getYearFromString(task.end);
+                if (y) years.add(y);
+            });
+            deliverables.forEach(item => {
+                const y = getYearFromDeliverable(item);
+                if (y) years.add(y);
+            });
+            const sorted = Array.from(years).filter(y => y !== '').sort((a, b) => Number(a) - Number(b));
+            selector.innerHTML = '<option value="">Todos los años</option>' + sorted.map(year => `<option value="${year}">${year}</option>`).join('');
+        }
+
+        function getYearFromString(dateText) {
+            if (!dateText) return null;
+            const isoMatch = dateText.match(/^(\d{4})/);
+            if (isoMatch) return isoMatch[1];
+            const slashMatch = dateText.match(/(\d{4})$/);
+            if (slashMatch) return slashMatch[1];
+            const spanishMatch = dateText.match(/(\d{4})$/);
+            if (spanishMatch) return spanishMatch[1];
+            return null;
+        }
+
+        function getYearFromDeliverable(item) {
+            if (item.deadline) {
+                return getYearFromString(item.deadline);
+            }
+            if (Array.isArray(item.associatedTasks) && item.associatedTasks.length > 0) {
+                const associatedYears = item.associatedTasks.map(code => {
+                    const task = tasks.find(t => t.id === code);
+                    return task ? getYearFromString(task.end) : null;
+                }).filter(Boolean);
+                if (associatedYears.length === 0) return null;
+                return associatedYears.sort()[associatedYears.length - 1];
+            }
+            return null;
+        }
+
+        function setTab(tab) {
+            activeTab = tab;
+            document.getElementById('tab-tareas').classList.toggle('active', tab === 'tareas');
+            document.getElementById('tab-entregables').classList.toggle('active', tab === 'entregables');
+            render();
+        }
+
+        function filterItems(items) {
+            const leader = document.getElementById('filterLeader').value;
+            const year = document.getElementById('filterYear').value;
+            const status = document.getElementById('filterStatus').value;
+            return items.filter(item => {
+                const field = item.leader || item.responsable || '';
+                const leaderMatch = leader === 'todos' || field.toLowerCase().includes(leader.toLowerCase());
+
+                let yearMatch = true;
+                if (year !== '') {
+                    const itemYear = item.id && item.end ? getYearFromString(item.end) : getYearFromDeliverable(item);
+                    yearMatch = itemYear ? Number(itemYear) <= Number(year) : false;
+                }
+
+                const itemStatus = normalizeStatus(item.status || 'No iniciado');
+                const statusMatch = status === 'TODOS' || itemStatus === status;
+                return leaderMatch && yearMatch && statusMatch;
+            });
+        }
+
+        function render() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+            if (activeTab === 'tareas') {
+                document.getElementById('tableHead').innerHTML = `
+                    <tr>
+                        <th rowspan="2">Cod.</th>
+                        <th rowspan="2" class="task-column">Tarea</th>
+                        <th rowspan="2">Responsable</th>
+                        <th colspan="2" class="group-header">Fecha</th>
+                        <th rowspan="2">Estado</th>
+                        <th colspan="2" class="group-header">Progreso</th>
+                        <th rowspan="2"></th>
+                    </tr>
+                    <tr>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Real</th>
+                        <th>Teórico</th>
+                    </tr>`;
+                renderTasks(filterItems(tasks));
+            } else {
+                document.getElementById('tableHead').innerHTML = `
+                    <tr>
+                        <th rowspan="2">Tareas asociadas</th>
+                        <th rowspan="2">Cód. Entregable</th>
+                        <th rowspan="2" class="task-column">Entregable</th>
+                        <th rowspan="2">Responsable</th>
+                        <th rowspan="2">Fecha Fin</th>
+                        <th rowspan="2">Estado</th>
+                        <th rowspan="2">Progreso</th>
+                        <th rowspan="2"></th>
+                    </tr>`;
+                renderDeliverables(filterItems(deliverables));
+            }
+        }
+
+        function renderTasks(items) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            if (!items.length) {
+                body.innerHTML = '<tr><td class="task-column" colspan="9" style="text-align:center; padding:30px 0;">No hay tareas que coincidan con el filtro.</td></tr>';
+                return;
+            }
+            const grouped = groupByPackage(items);
+            Object.keys(grouped).sort().forEach(pkg => {
+                const group = grouped[pkg];
+                const packageInfo = packageMeta[pkg] || {};
+                const packageProgress = group.reduce((sum, t) => sum + (t.progress || 0), 0) / group.length;
+                body.innerHTML += `
+                    <tr class="package-row">
+                        <td>${pkg}</td>
+                        <td class="task-column">${escapeHtml(packageInfo.title || 'Paquete ' + pkg)}</td>
+                        <td>${escapeHtml(packageInfo.leader || '-')}</td>
+                        <td>${escapeHtml(packageInfo.start || '-')}</td>
+                        <td>${escapeHtml(packageInfo.end || '-')}</td>
+                        <td></td>
+                        <td>📊 ${Math.round(packageProgress)}%</td>
+                        <td></td>
+                        <td></td>
+                    </tr>`;
+                group.forEach((task, index) => {
+                    const rowClass = index % 2 === 0 ? 'task-row-even' : 'task-row-odd';
+                    const statusOptions = ['No iniciado','Iniciado','Finalizado'].map(option => `<option value="${option}" ${task.status===option ? 'selected' : ''}>${option}</option>`).join('');
+                    const progressValue = task.status === 'Finalizado' ? 100 : task.status === 'No iniciado' ? 0 : (task.progress || 1);
+                    const progressDisabled = task.status === 'Iniciado' ? '' : 'disabled';
+                    body.innerHTML += `
+                        <tr class="${rowClass}">
+                            <td><strong>${escapeHtml(task.id)}</strong></td>
+                            <td class="task-column">${escapeHtml(task.title)}</td>
+                            <td>${badgeLeader(task.leader)}</td>
+                            <td>${escapeHtml(task.start || '-')}</td>
+                            <td>${escapeHtml(task.end || '-')}</td>
+                            <td><select class="status-select" onchange="onTaskStatusChange('${task.id}', this)">${statusOptions}</select></td>
+                            <td><input id="task-progress-${task.id}" class="progress-input" type="number" min="0" max="99" value="${progressValue}" onchange="onTaskProgressChange('${task.id}', this)" ${progressDisabled}></td>
+                            <td>${shouldShowTheoretical(task) ? calculateTheoreticalProgress(task) + '%' : ''}</td>
+                            <td><button class="comments-btn" onclick="openCommentsModal('${task.id}', 'task')">💬</button></td>
+                        </tr>`;
+                });
+            });
+        }
+
+        function getDeliverablePTGroup(item) {
+            const code = item.deliverableCode || item.deliverableId || item.code || '';
+            const match = String(code).match(/^E(\d+)/);
+            return match ? `PT${match[1]}` : 'PT?';
+        }
+
+        function groupDeliverablesByPackage(items) {
+            const groups = {};
+            items.forEach(item => {
+                const pkg = getDeliverablePTGroup(item);
+                if (!groups[pkg]) groups[pkg] = [];
+                groups[pkg].push(item);
+            });
+            return groups;
+        }
+
+        function renderDeliverables(items) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            if (!items.length) {
+                body.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px 0;">No hay entregables que coincidan con el filtro.</td></tr>';
+                return;
+            }
+            const grouped = groupDeliverablesByPackage(items);
+            Object.keys(grouped).sort().forEach(pkg => {
+                const group = grouped[pkg];
+                const packageInfo = packageMeta[pkg] || {};
+                const packageProgress = group.reduce((sum, i) => sum + (i.progress || 0), 0) / group.length;
+                body.innerHTML += `
+                    <tr class="package-row">
+                        <td><strong>${pkg}</strong></td>
+                        <td class="task-column" colspan="3"><span class="package-title">${escapeHtml(packageInfo.title || pkg)}</span></td>
+                        <td>${escapeHtml(packageInfo.leader || [...new Set(group.map(i => i.responsable || '')).join(' / ')])}</td>
+                        <td>${escapeHtml(packageInfo.end || '-')}</td>
+                        <td>📊 ${Math.round(packageProgress)}%</td>
+                        <td></td>
+                    </tr>`;
+                group.forEach((item, index) => {
+                    const rowClass = index % 2 === 0 ? 'task-row-even' : 'task-row-odd';
+                    const statusOptions = ['No iniciado','Iniciado','Finalizado'].map(option => `<option value="${option}" ${item.status===option ? 'selected' : ''}>${option}</option>`).join('');
+                    const progressValue = item.status === 'Finalizado' ? 100 : item.status === 'No iniciado' ? 0 : (item.progress || 1);
+                    const progressDisabled = item.status === 'Iniciado' ? '' : 'disabled';
+                    const associatedTasks = Array.isArray(item.associatedTasks) ? item.associatedTasks.join(', ') : (item.associatedTasks || '-');
+                    body.innerHTML += `
+                        <tr class="${rowClass}">
+                            <td>${escapeHtml(associatedTasks)}</td>
+                            <td><strong>${escapeHtml(item.deliverableCode)}</strong></td>
+                            <td class="task-column"><span class="task-title">${escapeHtml(item.title)}</span></td>
+                            <td>${badgeLeader(item.responsable)}</td>
+                            <td>${escapeHtml(item.deadline || packageInfo.end || '-')}</td>
+                            <td><select class="status-select" onchange="onDeliverableStatusChange('${item.deliverableCode}', this)">${statusOptions}</select></td>
+                            <td><input id="deliverable-progress-${item.deliverableCode}" class="progress-input" type="number" min="0" max="99" value="${progressValue}" onchange="onDeliverableProgressChange('${item.deliverableCode}', this)" ${progressDisabled}></td>
+                            <td><button class="comments-btn" onclick="openCommentsModal('${item.deliverableCode}', 'deliverable')">💬</button></td>
+                        </tr>`;
+                });
+            });
+        }
+
+        function badgeLeader(name) {
+            const upper = String(name).toUpperCase();
+            if (upper.includes('AYESA') && !upper.includes('AAS')) {
+                return `<span class="badge-ayesa">${escapeHtml(name)}</span>`;
+            }
+            if (upper.includes('AYESA AAS') || upper.includes('AYESA ASDA')) {
+                return `<span class="badge-ayesa badge-ayesa-asda">${escapeHtml(name)}</span>`;
+            }
+            return escapeHtml(name);
+        }
+
+        function escapeHtml(text) {
+            return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function groupByPackage(items) {
+            return items.reduce((acc, item) => {
+                const key = item.packageId || 'SIN PAQUETE';
+                acc[key] = acc[key] || [];
+                acc[key].push(item);
+                return acc;
+            }, {});
+        }
+
+        function shouldShowTheoretical(task) {
+            if (task.status === 'Finalizado') return false;
+            if (task.status === 'Iniciado') return true;
+            const start = parseSpanishMonth(task.start);
+            return start ? start < new Date() : false;
+        }
+
+        function calculateTheoreticalProgress(task) {
+            const start = parseSpanishMonth(task.start);
+            const end = parseSpanishMonth(task.end);
+            if (!start || !end || end <= start) return 0;
+            const now = new Date();
+            if (now <= start) return 0;
+            if (now >= end) return 100;
+            return Math.round(((now - start) / (end - start)) * 100);
+        }
+
+        function parseSpanishMonth(dateText) {
+            if (!dateText) return null;
+            const trimmed = String(dateText).trim();
+            // ISO dates like 2025-10-01 or 2025/10/01
+            const isoMatch = trimmed.match(/^(\d{4})[-\/]?(\d{2})[-\/]?(\d{2})$/);
+            if (isoMatch) {
+                return new Date(Number(isoMatch[1]), Number(isoMatch[2]) - 1, Number(isoMatch[3]));
+            }
+            const parts = trimmed.split(/\s+/);
+            if (parts.length === 2) {
+                const monthNames = { ene:0, 'ene.':0, feb:1, mar:2, abr:3, may:4, jun:5, jul:6, ago:7, sep:8, oct:9, nov:10, dic:11, enero:0, febrero:1, marzo:2, abril:3, mayo:4, junio:5, julio:6, agosto:7, septiembre:8, octubre:9, noviembre:10, diciembre:11 };
+                const month = monthNames[parts[0].toLowerCase()];
+                const year = parseInt(parts[1], 10);
+                if (month === undefined || Number.isNaN(year)) return null;
+                return new Date(year, month, 1);
+            }
+            return null;
+        }
+
+        function onTaskStatusChange(taskId, select) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            const newStatus = select.value;
+            const previousProgress = task.progress;
+            task.status = newStatus;
+            if (newStatus === 'Finalizado') task.progress = 100;
+            if (newStatus === 'No iniciado') task.progress = 0;
+            if (newStatus === 'Iniciado' && task.progress === 0) task.progress = 10;
+            saveTaskState(taskId, task, { recordStatus: true, recordProgress: task.progress !== previousProgress });
+            render();
+        }
+
+        function onTaskProgressChange(taskId, input) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            let value = parseInt(input.value, 10);
+            if (Number.isNaN(value)) value = 0;
+            value = Math.max(0, Math.min(99, value));
+            input.value = value;
+            const previousProgress = task.progress;
+            task.progress = value;
+            saveTaskState(taskId, task, { recordStatus: false, recordProgress: task.progress !== previousProgress });
+        }
+
+        function onDeliverableStatusChange(code, select) {
+            const item = deliverables.find(d => d.deliverableCode === code);
+            if (!item) return;
+            const newStatus = select.value;
+            const previousProgress = item.progress;
+            item.status = newStatus;
+            if (newStatus === 'Finalizado') item.progress = 100;
+            if (newStatus === 'No iniciado') item.progress = 0;
+            if (newStatus === 'Iniciado' && item.progress === 0) item.progress = 10;
+            saveDeliverableState(code, item, { recordStatus: true, recordProgress: item.progress !== previousProgress });
+            render();
+        }
+
+        function onDeliverableProgressChange(code, input) {
+            const item = deliverables.find(d => d.deliverableCode === code);
+            if (!item) return;
+            let value = parseInt(input.value, 10);
+            if (Number.isNaN(value)) value = 0;
+            value = Math.max(0, Math.min(99, value));
+            input.value = value;
+            const previousProgress = item.progress;
+            item.progress = value;
+            saveDeliverableState(code, item, { recordStatus: false, recordProgress: item.progress !== previousProgress });
+        }
+
+        function saveTaskState(taskId, task, options = { recordStatus: true, recordProgress: true }) {
+            if (!store.tareas[taskId]) {
+                store.tareas[taskId] = { taskId, title: task.title, leader: task.leader, progressHistory: [], statusHistory: [], commentHistory: [] };
+            }
+            const state = store.tareas[taskId];
+            state.statusHistory = state.statusHistory || [];
+            state.progressHistory = state.progressHistory || [];
+            if (options.recordStatus) {
+                state.statusHistory.push({ timestamp: new Date().toISOString(), status: task.status });
+            }
+            if (options.recordProgress) {
+                state.progressHistory.push({ timestamp: new Date().toISOString(), percentage: task.progress });
+            }
+            localStorage.setItem('softep-tareas', JSON.stringify(store.tareas));
+            saveTasksJson();
+        }
+
+        function saveDeliverableState(code, item, options = { recordStatus: true, recordProgress: true }) {
+            if (!store.entregables[code]) {
+                store.entregables[code] = { deliverableCode: code, title: item.title, responsable: item.responsable, progressHistory: [], statusHistory: [], commentHistory: [] };
+            }
+            const state = store.entregables[code];
+            state.statusHistory = state.statusHistory || [];
+            state.progressHistory = state.progressHistory || [];
+            if (options.recordStatus) {
+                state.statusHistory.push({ timestamp: new Date().toISOString(), status: item.status });
+            }
+            if (options.recordProgress) {
+                state.progressHistory.push({ timestamp: new Date().toISOString(), percentage: item.progress });
+            }
+            localStorage.setItem('softep-entregables', JSON.stringify(store.entregables));
+            saveEntregablesJson();
+        }
+
+        function openCommentsModal(code, type) {
+            currentModal = { code, type };
+            const titleEl = document.getElementById('modalTitle');
+            const statusList = document.getElementById('statusList');
+            const progressList = document.getElementById('progressList');
+            const commentsList = document.getElementById('commentsList');
+            const record = type === 'task' ? tasks.find(t => t.id === code) : deliverables.find(d => d.deliverableCode === code);
+            const storage = type === 'task' ? store.tareas[code] : store.entregables[code];
+            titleEl.textContent = `${code} - ${record ? record.title : 'Elemento'}`;
+            statusList.innerHTML = '';
+            progressList.innerHTML = '';
+            commentsList.innerHTML = '';
+            if (storage) {
+                if (Array.isArray(storage.statusHistory)) {
+                    storage.statusHistory.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(entry => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `<span class="comment-date">${new Date(entry.timestamp).toLocaleString()}</span><div class="comment-text"><strong>Estado:</strong> ${escapeHtml(entry.status || '')}</div>`;
+                        statusList.appendChild(div);
+                    });
+                }
+                if (Array.isArray(storage.progressHistory)) {
+                    storage.progressHistory.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(entry => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `<span class="comment-date">${new Date(entry.timestamp).toLocaleString()}</span><div class="comment-text"><strong>Progreso:</strong> ${escapeHtml(String(entry.percentage || 0))}%</div>`;
+                        progressList.appendChild(div);
+                    });
+                }
+                if (Array.isArray(storage.commentHistory)) {
+                    storage.commentHistory.slice().reverse().forEach(entry => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `<span class="comment-date">${new Date(entry.timestamp).toLocaleString()}</span><div class="comment-text">${escapeHtml(entry.comment)}</div>`;
+                        commentsList.appendChild(div);
+                    });
+                }
+            }
+            document.getElementById('newComment').value = '';
+            document.getElementById('commentsModal').style.display = 'flex';
+        }
+
+        function closeCommentsModal() {
+            document.getElementById('commentsModal').style.display = 'none';
+            currentModal = { code: null, type: 'task' };
+        }
+
+        function addComment() {
+            const text = document.getElementById('newComment').value.trim();
+            if (!text || !currentModal.code) return;
+            const storage = currentModal.type === 'task' ? store.tareas : store.entregables;
+            if (!storage[currentModal.code]) {
+                const record = currentModal.type === 'task' ? tasks.find(t => t.id === currentModal.code) : deliverables.find(d => d.deliverableCode === currentModal.code);
+                storage[currentModal.code] = {
+                    taskId: currentModal.code,
+                    title: record ? record.title : '',
+                    leader: record ? record.leader || record.responsable : '',
+                    progressHistory: [],
+                    statusHistory: [],
+                    commentHistory: []
+                };
+            }
+            storage[currentModal.code].commentHistory = storage[currentModal.code].commentHistory || [];
+            storage[currentModal.code].commentHistory.push({ timestamp: new Date().toISOString(), comment: text });
+            if (currentModal.type === 'task') {
+                localStorage.setItem('softep-tareas', JSON.stringify(store.tareas));
+                saveTasksJson();
+            } else {
+                localStorage.setItem('softep-entregables', JSON.stringify(store.entregables));
+                saveEntregablesJson();
+            }
+            openCommentsModal(currentModal.code, currentModal.type);
+        }
+
+        async function saveTasksJson() {
+            try {
+                await fetch(SAVE_TASKS_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store.tareas) });
+            } catch (error) {
+                showMessage('No se pudo guardar tareas en el servidor.', true);
+            }
+        }
+
+        async function saveEntregablesJson() {
+            try {
+                await fetch(SAVE_ENTREGABLES_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store.entregables) });
+            } catch (error) {
+                showMessage('No se pudo guardar entregables en el servidor.', true);
+            }
+        }
+
+        function showMessage(text, isError = false) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.style.display = 'block';
+            box.style.background = isError ? '#fee2e2' : '#fef9c3';
+            box.style.borderColor = isError ? '#fca5a5' : '#fbbf24';
+        }
+
+        async function init() {
+            try {
+                const [datesData, tareasData, entregablesData] = await Promise.all([
+                    loadJson('dates.json'),
+                    loadJson('tareas.json'),
+                    loadJson('entregables.json')
+                ]);
+                store.dates = datesData.paquetes || [];
+                store.tareas = tareasData || {};
+                store.entregables = entregablesData || {};
+                buildTasksFromDates(datesData);
+                applyTareasState();
+                applyEntregablesState();
+                populateResponsableFilter();
+                populateYearFilter();
+                render();
+            } catch (error) {
+                showMessage('Error cargando datos. Asegúrate de servir los archivos desde un servidor local.', true);
+                console.error(error);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

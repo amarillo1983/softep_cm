@@ -1,0 +1,257 @@
+{
+  "T1.1": {
+    "taskId": "T1.1",
+    "title": "Definición de los procesos y productos de la factoría de software Value Stream Digital Twin",
+    "leader": "AYESA",
+    "progressHistory": [
+      {
+        "timestamp": "2026-05-13T13:48:32.562Z",
+        "percentage": 10
+      },
+      {
+        "timestamp": "2026-05-13T13:48:45.323Z",
+        "percentage": 30
+      },
+      {
+        "timestamp": "2026-05-13T13:52:02.190Z",
+        "percentage": 45
+      },
+      {
+        "timestamp": "2026-07-01T10:31:07.064Z",
+        "percentage": 0
+      },
+      {
+        "timestamp": "2026-07-01T11:00:54.023Z",
+        "percentage": 10
+      },
+      {
+        "timestamp": "2026-07-01T11:00:56.635Z",
+        "percentage": 0
+      }
+    ],
+    "commentHistory": [
+      {
+        "timestamp": "2026-05-13T13:52:20.139Z",
+        "comment": "Hola, primer comentario."
+      },
+      {
+        "timestamp": "2026-05-13T13:52:42.731Z",
+        "comment": "Hi, segundo comentario"
+      },
+      {
+        "timestamp": "2026-05-13T13:57:24.452Z",
+        "comment": "Hello, tercer comentario, esto es una pasada, vaya cm me acabo de montar."
+      }
+    ],
+    "statusHistory": [
+      {
+        "timestamp": "2026-05-13T13:48:32.562Z",
+        "status": "Iniciado"
+      },
+      {
+        "timestamp": "2026-07-01T10:31:07.064Z",
+        "status": "No iniciado"
+      },
+      {
+        "timestamp": "2026-07-01T11:00:54.023Z",
+        "status": "Iniciado"
+      },
+      {
+        "timestamp": "2026-07-01T11:00:56.635Z",
+        "status": "No iniciado"
+      }
+    ]
+  },
+  "T1.2": {
+    "taskId": "T1.2",
+    "title": "Análisis Normativo Avanzado (Cybersecurity Act, AI Act, ISO 27001/42001)",
+    "leader": "COTESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T1.3": {
+    "taskId": "T1.3",
+    "title": "Investigación en Marco de Ética, Transparencia y Gobernanza de la IA",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T1.4": {
+    "taskId": "T1.4",
+    "title": "Modelado As-Is mediante Minería de Procesos",
+    "leader": "AGILIA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T1.5": {
+    "taskId": "T1.5",
+    "title": "Diseño To-Be y Adaptación al Espacio de Datos de la FS",
+    "leader": "BALIDEA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T2.1": {
+    "taskId": "T2.1",
+    "title": "Investigación en del Metamodelo y Arquitectura del Gemelo",
+    "leader": "AGILIA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T2.2": {
+    "taskId": "T2.2",
+    "title": "Investigación en mecanismos de Ingesta de Eventos y Registro de Esquemas",
+    "leader": "BALIDEA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T2.3": {
+    "taskId": "T2.3",
+    "title": "Extracción de conocimiento y preparación de datos",
+    "leader": "AGILIA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T2.4": {
+    "taskId": "T2.4",
+    "title": "Investigación para el despliegue Operativo del Grafo del Gemelo",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T2.5": {
+    "taskId": "T2.5",
+    "title": "Criterios legales y ético, Ciberseguridad, Privacidad y Compliance",
+    "leader": "TD",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T2.6": {
+    "taskId": "T2.6",
+    "title": "Investigación en técnicas de visualización y presentación de datos",
+    "leader": "COTESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T3.1": {
+    "taskId": "T3.1",
+    "title": "Investigación Exploratoria en Motores de Simulación Orientados a Eventos",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T3.2": {
+    "taskId": "T3.2",
+    "title": "Investigación en algoritmos Predictivos de Productividad y Riesgo",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T3.3": {
+    "taskId": "T3.3",
+    "title": "Investigación de Mecanismos de Interoperabilidad y Federación de Gemelos Digitales",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T3.4": {
+    "taskId": "T3.4",
+    "title": "Investigación en Arquitecturas de Visualización Streaming y Dashboards Cognitivos",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T3.5": {
+    "taskId": "T3.5",
+    "title": "Desarrollo Preliminar de Técnicas NLG para Informes Explicables",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T3.6": {
+    "taskId": "T3.6",
+    "title": "Investigación Basal en Observabilidad y Ciberresiliencia del Gemelo Digital",
+    "leader": "TD",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T4.1": {
+    "taskId": "T4.1",
+    "title": "Agentes de apoyo al ciclo inicial del desarrollo de software",
+    "leader": "COTESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T4.2": {
+    "taskId": "T4.2",
+    "title": "Agentes de aprendizaje y adaptación en tiempo de ejecución",
+    "leader": "BALIDEA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T4.3": {
+    "taskId": "T4.3",
+    "title": "Agentes para el aseguramiento de la seguridad, cumplimiento normativo y sostenibilidad",
+    "leader": "AGILIA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T4.4": {
+    "taskId": "T4.4",
+    "title": "Integración Arquitectónica de Agentes Autónomos en el Gemelo Digital",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T5.1": {
+    "taskId": "T5.1",
+    "title": "Despliegue e Interconexion de Gemelos digitales pluri regionales",
+    "leader": "AYESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T5.2": {
+    "taskId": "T5.2",
+    "title": "Ahorro energético en el desarrollo de software",
+    "leader": "COTESA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T5.3": {
+    "taskId": "T5.3",
+    "title": "Evaluación del impacto en la productividad y la mejora continua",
+    "leader": "AGILIA",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  },
+  "T5.4": {
+    "taskId": "T5.4",
+    "title": "Validación de criterios éticos, de explicabilidad y legales de la IA",
+    "leader": "TD",
+    "progressHistory": [],
+    "commentHistory": [],
+    "statusHistory": []
+  }
+}
